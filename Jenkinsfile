@@ -14,10 +14,8 @@ pipeline {
         }
         stage('blackduck') {
             steps {
-                configFileProvider([configFile(fileId: 'Dockerfile.detect-dotnet', targetLocation: 'Dockerfile.detect')]) { sh 'cat Dockerfile.detect' }
                 withCredentials([string(credentialsId: 'poc329.blackduck.synopsys.com', variable: 'BLACKDUCK_API_TOKEN')]) {
                     sh '''
-                        env | sort
                         docker build -f Dockerfile.detect -t detect-dotnet .
                         docker run --rm -u $(id -u):$(id -g) -v $WORKSPACE:/source -v $WORKSPACE:/output detect-dotnet \
                             --blackduck.url=$BLACKDUCK_URL --blackduck.api.token=$BLACKDUCK_API_TOKEN \
